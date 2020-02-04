@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { 
+import {
   EventsListComponent,
   EventThumbnailComponent,
   EventDetailsComponent,
@@ -16,9 +16,10 @@ import {
   DurationPipe
 } from './events/index';
 
-import { 
-  ToastrService, 
-  CollapsibleWellComponent 
+import {
+  TOASTR_TOKEN,
+  CollapsibleWellComponent,
+  Toastr
 } from './common/index';
 
 import { EventsAppComponent } from './events-app.component';
@@ -26,6 +27,8 @@ import { NavBarComponent } from './nav/navbar.component';
 import { Error404Component } from './errors/404.component';
 import { appRoutes } from './routes';
 import { AuthService } from './user/auth.service';
+
+let toastr:Toastr = window['toastr']
 
 @NgModule({
   imports: [
@@ -47,9 +50,12 @@ import { AuthService } from './user/auth.service';
     CollapsibleWellComponent,
     DurationPipe
   ],
-  providers: [ 
+  providers: [
     EventService,
-    ToastrService,
+    {
+      provide: TOASTR_TOKEN, 
+      useValue: toastr
+    },
     EventRouteActivator,
     EventListResolver,
     AuthService,
@@ -58,12 +64,12 @@ import { AuthService } from './user/auth.service';
       useValue: checkDirtyState
     }
   ],
-  bootstrap: [ EventsAppComponent ]
+  bootstrap: [EventsAppComponent]
 })
 
 export class AppModule { }
 
-export function checkDirtyState(component:CreateEventComponent) {
+export function checkDirtyState(component: CreateEventComponent) {
   if (component.isDirty)
     return window.confirm('You have not saved this event, do you really want to cancel?')
   return true
